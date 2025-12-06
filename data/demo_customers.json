@@ -1,0 +1,12 @@
+[
+  {"id": 1, "name": "Asha Iyer", "age": 29, "city": "Mumbai", "current_loan_details": "", "credit_score": 780, "pre_approved_limit": 200000, "salary": 80000, "pan": "AAAAA1111A"},
+  {"id": 2, "name": "Sahil Desai", "age": 35, "city": "Delhi", "current_loan_details": "", "credit_score": 720, "pre_approved_limit": 150000, "salary": 60000, "pan": "BBBBB2222B"},
+  {"id": 3, "name": "Priya Patel", "age": 31, "city": "Ahmedabad", "current_loan_details": "", "credit_score": 690, "pre_approved_limit": 100000, "salary": 45000, "pan": "CCCCC3333C"},
+  {"id": 4, "name": "Vikram Desai", "age": 42, "city": "Pune", "current_loan_details": "", "credit_score": 640, "pre_approved_limit": 120000, "salary": 70000, "pan": "DDDDD4444D"},
+  {"id": 5, "name": "Sneha Kapoor", "age": 27, "city": "Bangalore", "current_loan_details": "", "credit_score": 755, "pre_approved_limit": 250000, "salary": 95000, "pan": "EEEEE5555E"},
+  {"id": 6, "name": "Manish Verma", "age": 39, "city": "Chennai", "current_loan_details": "", "credit_score": 800, "pre_approved_limit": 300000, "salary": 120000, "pan": "FFFFF6666F"},
+  {"id": 7, "name": "Nisha Rao", "age": 33, "city": "Hyderabad", "current_loan_details": "", "credit_score": 740, "pre_approved_limit": 180000, "salary": 65000, "pan": "GGGGG7777G"},
+  {"id": 8, "name": "Arjun Menon", "age": 30, "city": "Kochi", "current_loan_details": "", "credit_score": 710, "pre_approved_limit": 160000, "salary": 55000, "pan": "HHHHH8888H"},
+  {"id": 9, "name": "Ritu Singh", "age": 45, "city": "Lucknow", "current_loan_details": "", "credit_score": 670, "pre_approved_limit": 90000, "salary": 38000, "pan": "IIIII9999I"},
+  {"id": 10, "name": "Karan Malhotra", "age": 28, "city": "Jaipur", "current_loan_details": "", "credit_score": 785, "pre_approved_limit": 220000, "salary": 85000, "pan": "JJJJJ0000J"}
+]
