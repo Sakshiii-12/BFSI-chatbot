@@ -61,12 +61,12 @@ bfsi_chatbot/
 
 # Login Credentials
 
-| Role     | Email                                             | Password        |
-| -------- | ------------------------------------------------- | --------------- |
-| Customer | **[customer@nbfc.com](mailto:customer@nbfc.com)** | **Customer789** |
-| Manager  | **[manager@nbfc.com](mailto:manager@nbfc.com)**   | **Manager456**  |
+| Role     | Email                   | Password        |
+| -------- | ------------------------| --------------- |
+| Customer | **[customer@nbfc.com]** | **Customer789** |
+| Manager  | **[manager@nbfc.com]**  | **Manager456**  |
 
----
+
 
 # How to Use the Application
 
