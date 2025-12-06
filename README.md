@@ -9,155 +9,253 @@ This system demonstrates how modular AI agents can collaboratively deliver compl
 Developed for **EY Techathon 6.0 – Challenge II: BFSI (Tata Capital)**, it showcases how Agentic AI principles can improve operational efficiency, reduce processing time, and enhance the digital customer experience.
 
 
-# Project Structure
+## 1. Problem Overview
+
+The NBFC aims to increase conversions on personal loan applications sourced through digital channels. To achieve this, the system provides an interactive chatbot that behaves like a human sales executive, understands customer needs, and coordinates multiple back-end agents to complete the end-to-end personal loan journey:
+
+1. Conversational engagement and need discovery
+2. Sales negotiation and offer discussion
+3. Verification checks (KYC, PAN, salary slip)
+4. Credit bureau score retrieval
+5. Underwriting based on defined eligibility rules
+6. Sanction letter generation for approved applications
+
+The system must demonstrate realistic orchestration between agents, reproducible decisions, auditability, and the ability to handle edge cases such as rejections and conditional approvals.
+
+
+
+## 2. Key Features
+
+### Agentic Architecture
+
+* **Master Agent** orchestrates the complete loan workflow and manages conversation flow.
+* **Sales Agent** discusses loan needs, amounts, and recommends suitable offers.
+* **Verification Agent** performs KYC checks using a mock CRM, extracts PAN and salary from uploaded documents, and detects anomalies.
+* **Underwriting Agent** applies NBFC underwriting rules and produces structured decisions.
+* **Sanction Letter Agent** generates PDF sanction letters for approved applications.
+
+### End-to-End Loan Pipeline
+
+* Customer describes their loan requirement through chat or form inputs.
+* Master Agent triggers worker agents and compiles their outputs into a unified decision trace.
+* Decisions include EMI calculation, EMI-to-salary percentage, rule firing explanations, and risk scoring.
+
+### Credit and Offer Systems
+
+* Mock credit bureau API returning deterministic scores.
+* Offer Mart server providing tiered loan offers.
+* Recommender to prioritize offers based on credit strength and applicant profile.
+
+### Document Intelligence
+
+* PAN extraction via regex.
+* Salary inference from uploaded PDF or images.
+* Simple fraud detection using document anomalies.
+
+### User Interfaces (Streamlit)
+
+* **Customer Dashboard**
+  Loan simulation, chat interface, sanction letter downloads, activity tracking.
+* **Manager Dashboard**
+  Audit logs, data exports, manual review queue for conditional approvals.
+
+### Auditability and Explainability
+
+* All decisions logged in `outputs/decision_traces.jsonl`.
+* Conditional cases logged in `outputs/manual_review.jsonl`.
+* XAI module produces risk scores and rule-based explanations.
+* Sanction letters include decision rationale and conversation transcript.
+
+### Edge Case Handling
+
+* Automatic rejection for low credit score.
+* Conditional decisions requiring salary slip upload.
+* Rejection when requested amount exceeds 2× pre-approved limit.
+* Fraud anomaly flagging via PAN mismatch.
+
+
+
+## 3. Project Structure
 
 ```
 bfsi_chatbot/
-│
-├── app.py                        # Main router (login → customer/manager dashboards)
-├── config.py                     # App settings, credentials
+├── app.py
+├── config.py
 ├── requirements.txt
-│
 ├── data/
-│   ├── demo_customers.json       # Sample customer dataset
-│   └── kyc_data.json             # Demo PAN/salary slip/KYC store
-│
-├── outputs/
-│   ├── decision_traces.jsonl     # Audit logs for every loan decision
-│   ├── manual_review.jsonl       # Pending conditional cases for managers
-│   └── sanction_letters/         # Auto-generated PDF sanction letters
-│
-├── agents/                       # Core Agentic AI System
-│   ├── master_agent.py           # Orchestrates the full pipeline
-│   ├── sales_agent.py            # Conversational offer & upsell logic
-│   ├── verification_agent.py     # PAN/KYC verification + document checks
-│   ├── underwriting_agent.py     # NBFC rule engine (EMI rules, risk, scoring)
-│   ├── sanction_agent.py         # Sanction letter PDF generator
-│   └── utils.py                  # EMI calc + helper functions
-│
-├── services/                     # Mock APIs & intelligence components
-│   ├── credit_bureau.py          # Mock credit score service
-│   ├── offer_mart.py             # Pre-approved loan offer catalog
-│   ├── crm_mock.py               # Dummy CRM lookup
-│   ├── doc_intel.py              # Document intelligence (PAN/salary slip)
-│   ├── fraud_detection.py        # Optional anomaly/fake-doc checks
-│   ├── recommender.py            # Loan recommendation engine
-│   ├── scenario_compare.py       # A/B scenario comparison logic
-│   └── xai.py                    # Explainable decisioning module
-│
+│   ├── demo_customers.json
+│   └── kyc_data.json
+├── agents/
+│   ├── master_agent.py
+│   ├── sales_agent.py
+│   ├── verification_agent.py
+│   ├── underwriting_agent.py
+│   ├── sanction_agent.py
+│   └── utils.py
+├── services/
+│   ├── credit_bureau.py
+│   ├── crm_mock.py
+│   ├── doc_intel.py
+│   ├── fraud_detection.py
+│   ├── offer_mart.py
+│   ├── recommender.py
+│   ├── audit.py
+│   ├── report_generator.py
+│   └── xai.py
+├── api/
+│   └── mock_server.py
 ├── chat/
-│   ├── chat_ui.py                # WhatsApp-style chat interface
-│   ├── nlu.py                    # Intent detection + entity extraction
-│   └── llm_stub.py               # Fallback LLM response generator
-│
+│   ├── chat_ui.py
+│   ├── nlu.py
+│   └── llm_stub.py
 ├── ui/
-│   ├── theme.py                  # Global CSS, theme colors, styling
-│   ├── auth_page.py              # Login screen
-│   ├── customer_page.py          # Customer dashboard
-│   ├── manager_page.py           # Manager dashboard (audit + reviews)
-│   └── ui_components.py          # Reusable cards, KPIs, tables
+│   ├── auth_page.py
+│   ├── customer_page.py
+│   ├── manager_page.py
+│   └── theme.py
+├── tests/
+│   └── test_utils.py
+└── outputs/
+    ├── sanction_letters/
+    ├── decision_traces.jsonl
+    └── manual_review.jsonl
 ```
 
 
-# Login Credentials
 
-| Role     | Email                   | Password        |
-| -------- | ------------------------| --------------- |
-| Customer | **[customer@nbfc.com]** | **Customer789** |
-| Manager  | **[manager@nbfc.com]**  | **Manager456**  |
+## 4. How to Run
 
+### Install dependencies
 
-
-# How to Use the Application
-
-### **1. Install dependencies**
-
-```bash
+```
 pip install -r requirements.txt
 ```
 
-### **2. Run the app**
+### Start the application
 
-```bash
+```
 streamlit run app.py
 ```
 
-### **3. Log in using customer or manager credentials**
+### Login Credentials
 
-* **Customer** → Loan simulation, chat assistant, scenario comparison
-* **Manager** → Audit logs, operational dashboard, manual case decisions
+These demo credentials are defined in `config.py`:
 
-### **4. Explore the system**
+**Customer**
+Email: `customer@nbfc.com`
+Password: `Customer789`
 
-* Customers can:
-
-  * Chat with the loan assistant (“I need 3 lakh for medical”)
-  * Run structured EMI calculations
-  * Compare two loan scenarios
-  * View portfolio summary & past activity
-
-* Managers can:
-
-  * Check all previous customer decisions
-  * See explainable reasoning (XAI)
-  * Export audit logs
-  * Approve or reject conditional cases
+**Manager**
+Email: `manager@nbfc.com`
+Password: `Manager456`
 
 
-# Overview
 
-This project simulates a **real NBFC underwriting workflow** using an **Agentic AI system**:
+## 5. How to Use
 
-1. **Sales Agent**
-   Extracts intent, amounts, reasons, upsell suggestions.
+### Customer Mode
 
-2. **Verification Agent**
-   PAN/KYC checks, salary slip parsing, fraud flags.
+1. Sign in as a customer.
+2. Navigate using the sidebar:
 
-3. **Underwriting Agent**
-   EMI rules, affordability checks, risk scoring, explainability.
+   * **Overview**: Profile summary and recent loan decisions
+   * **Compare**: Run two loan scenarios side-by-side
+   * **Simulate**: Run structured loan checks, upload salary slips, view decisions
+   * **Chat**: Interact with the loan assistant using natural language
+3. If approved, download the sanction letter PDF.
 
-4. **Sanction Agent**
-   Generates a professional sanction letter (PDF).
+### Manager Mode
 
-All actions are logged in JSONL, offering complete auditability.
+1. Sign in as a manager.
+2. Explore:
+
+   * **Overview**: Global KPIs and export options
+   * **Audit**: View historical decision logs
+   * **Manual Reviews**: Approve or reject conditional cases
+3. All actions are logged for audit compliance.
 
 
-# Features
 
-### Customer-Facing
+## 6. Underwriting Rules Implemented
 
-* WhatsApp-style clean chat interface
-* Conversational loan advisory
-* EMI calculation & eligibility decision
-* Multi-scenario loan comparison
-* Auto-generated sanction letter
-* Clean dashboard with donut analytics
-* Salary, credit score, risk-based evaluation
-* Transparent rule-based explanations (XAI)
+1. **Credit Score Rule**
 
-### Manager-Facing
+   * If credit score < 700 → Reject.
 
-* Manager dashboard with key metrics
-* Manual review queue for conditional cases
-* Approve/reject decisions with notes
-* Audit trail viewer (decision history)
-* Export logs (CSV / JSON)
-* Color-coded decision tables & KPIs
+2. **Within Pre-Approved Limit**
 
-### AI & Logic
+   * If requested amount ≤ pre-approved limit → Approve instantly.
 
-* Multistage Agentic workflow
-* Intent extraction (NLU)
-* Document intelligence (PAN / salary slip)
-* Fraud anomaly checks
-* Rule-driven underwriting + risk scoring
-* Fully explainable decisions (XAI)
+3. **Moderate Risk Band (≤ 2× Pre-Approved)**
 
-### UI / UX
+   * Requires salary verification.
+   * Approve only if EMI ≤ 50 percent of monthly salary.
+   * Otherwise reject.
 
-* Clean sidebar navigation
-* Uniform theme + custom styling
-* Compact layouts with minimal whitespace
-* Responsive cards & KPIs
-* Donut charts with NBFC-appropriate colors
+4. **High-Risk Band (> 2× Pre-Approved)**
+
+   * Reject automatically.
+
+
+
+## 7. Data and Mock Systems
+
+### Demo Customer Data
+
+* At least 10 synthetic customers with salary, credit score, pre-approved amounts, PAN.
+
+### CRM Mock Server
+
+* Provides PAN, address, phone, salary.
+
+### Credit Bureau API
+
+* Mock deterministic score between 620 and 820.
+
+
+
+## 8. PDF Generation
+
+Sanction letters include:
+
+* Applicant details
+* Decision summary
+* EMI and EMI-to-salary ratio
+* Rules fired
+* Risk score
+* Conversation transcript
+
+Unicode sanitization and optional TTF font support ensure reliable PDF creation.
+
+
+
+## 9. Testing
+
+Unit tests available in `tests/test_utils.py` include:
+
+* EMI calculation
+* Loan rejection based on credit score
+* Additional recommended tests for full underwriting logic
+
+Run using:
+
+```
+pytest
+```
+
+
+## 10. Limitations and Assumptions
+
+* Document extraction uses regex-based heuristics, not OCR.
+* Recommender logic is simplified but demonstrates offer-based reasoning.
+* Sales Agent behavior is template-driven rather than LLM-powered.
+* Mock systems simulate real banking back-ends and are not meant for production use.
+
+
+## 11. Future Improvements
+
+* Integrate real OCR for document extraction.
+* Add more advanced LLM-based sales negotiation.
+* Support multilingual chat flows.
+* Add complex fraud scoring models.
+* Replace mock APIs with real banking systems.
