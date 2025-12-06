@@ -1,10 +1,8 @@
 # BFSI Chatbot - Agentic AI for Personal Loan Sales
 
-The **BFSI Chatbot** is an Agentic AI solution designed to simulate an intelligent loan officer for Non-Banking Financial Companies (NBFCs).  
-It automates the personal loan process—from customer engagement and KYC verification to credit evaluation and sanction letter generation—through a conversational interface.
+The **BFSI Chatbot** is an Agentic AI solution designed to simulate an intelligent loan officer for Non-Banking Financial Companies (NBFCs). It automates the personal loan process from customer engagement and KYC verification to credit evaluation and sanction letter generation—through a conversational interface.
 
-The chatbot is designed to handle multiple customers simultaneously and maintain context throughout the interaction. It provides a personalized, human-like experience by dynamically responding to user inputs, evaluating eligibility, and guiding applicants through each step of the loan process.  
-This system demonstrates how modular AI agents can collaboratively deliver complex financial services efficiently while ensuring compliance with predefined business rules.
+The chatbot is designed to handle multiple customers simultaneously and maintain context throughout the interaction. It provides a personalized, human-like experience by dynamically responding to user inputs, evaluating eligibility, and guiding applicants through each step of the loan process. This system demonstrates how modular AI agents can collaboratively deliver complex financial services efficiently while ensuring compliance with predefined business rules.
 
 Developed for **EY Techathon 6.0 – Challenge II: BFSI (Tata Capital)**, it showcases how Agentic AI principles can improve operational efficiency, reduce processing time, and enhance the digital customer experience.
 
