@@ -1,6 +1,5 @@
 # BFSI Chatbot - Agentic AI for Personal Loan Sales
 
-## 1. Overview
 The **BFSI Chatbot** is an Agentic AI solution designed to simulate an intelligent loan officer for Non-Banking Financial Companies (NBFCs).  
 It automates the personal loan process—from customer engagement and KYC verification to credit evaluation and sanction letter generation—through a conversational interface.
 
@@ -10,131 +9,155 @@ This system demonstrates how modular AI agents can collaboratively deliver compl
 Developed for **EY Techathon 6.0 – Challenge II: BFSI (Tata Capital)**, it showcases how Agentic AI principles can improve operational efficiency, reduce processing time, and enhance the digital customer experience.
 
 
-
-## 2. Objective
-- Build an **Agentic AI framework** for conversational loan processing.  
-- Use a **Master Agent** to orchestrate multiple Worker Agents.  
-- Simulate real-world BFSI operations, including KYC, underwriting, and sanctioning.  
-- Demonstrate transparency and rule-based automation in financial decision-making.
-
-
-
-## 3. Architecture & Workflow
-The BFSI Chatbot is a **multi-agent system** coordinated by a **Master Agent**:
-
-- **Master Agent:** Maintains conversation context, interprets user input, and orchestrates the workflow.  
-- **Sales Agent:** Proposes pre-approved or custom loan offers and collects requested amounts.  
-- **Verification Agent:** Validates KYC details, ensuring essential information is present and accurate.  
-- **Underwriting Agent:** Evaluates eligibility based on credit score, requested loan amount, and salary verification. It approves, conditionally approves, or rejects loans using EMI calculations.  
-- **Sanction Agent:** Generates a PDF sanction letter for approved loans.  
-
-The process is sequential and context-aware:
-1. **SalesAgent** presents loan offers and captures user input.  
-2. **VerificationAgent** validates KYC information.  
-3. **UnderwritingAgent** assesses creditworthiness and salary-based EMI feasibility.  
-4. **SanctionAgent** generates the official sanction letter if approved.  
-5. **MasterAgent** concludes the conversation and provides the final outcome.
-
-
-
-## 4. Project Structure
+# Project Structure
 
 ```
-
 bfsi_chatbot/
 │
-├── app.py                           # Main entry point
-├── requirements.txt                 # Dependency list
+├── app.py                        # Main router (login → customer/manager dashboards)
+├── config.py                     # App settings, credentials
+├── requirements.txt
 │
-├── agent/
-│   ├── master_agent.py              # Central orchestrator
-│   ├── sales_agent.py               # Loan proposal logic
-│   ├── verification_agent.py        # KYC validation
-│   ├── underwriting_agent.py        # Credit and EMI evaluation
-│   ├── sanction_agent.py            # PDF sanction generation
-│
-├── fonts/
-│   └── DejaVuSans.ttf               # Font for PDF generation
+├── data/
+│   ├── demo_customers.json       # Sample customer dataset
+│   └── kyc_data.json             # Demo PAN/salary slip/KYC store
 │
 ├── outputs/
-│   └── sanction_<customer>.pdf      # Generated sanction letters
+│   ├── decision_traces.jsonl     # Audit logs for every loan decision
+│   ├── manual_review.jsonl       # Pending conditional cases for managers
+│   └── sanction_letters/         # Auto-generated PDF sanction letters
 │
-└── README.md                        # Project documentation
-
-````
-
-
-
-## 5. Core Logic
-
-### Loan Evaluation Criteria
-- **Approved:** Loan ≤ pre-approved limit  
-- **Conditionally Approved:** Loan ≤ 2× pre-approved limit (requires salary verification)  
-- **Rejected:** Loan > 2× pre-approved limit or credit score < 700  
-
-### EMI Calculation
-The EMI is calculated as:
-
-$$
-EMI = \frac{P \times r \times (1 + r)^n}{(1 + r)^n - 1}
-$$
-
-where:  
-- $$\(P\)$$ = Principal loan amount  
-- $$\(r\)$$ = Monthly interest rate  
-- $$\(n\)$$ = Loan tenure (in months)  
-
-Approval is granted only if **EMI ≤ 50% of the applicant’s monthly salary**.
-
-
-
-## 6. Installation & Setup
-
-### Step 1: Clone Repository
-```bash
-git clone https://github.com/<your-username>/bfsi_chatbot.git
-cd bfsi_chatbot
-````
-
-### Step 2: Create Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate       # On Windows: venv\Scripts\activate
+├── agents/                       # Core Agentic AI System
+│   ├── master_agent.py           # Orchestrates the full pipeline
+│   ├── sales_agent.py            # Conversational offer & upsell logic
+│   ├── verification_agent.py     # PAN/KYC verification + document checks
+│   ├── underwriting_agent.py     # NBFC rule engine (EMI rules, risk, scoring)
+│   ├── sanction_agent.py         # Sanction letter PDF generator
+│   └── utils.py                  # EMI calc + helper functions
+│
+├── services/                     # Mock APIs & intelligence components
+│   ├── credit_bureau.py          # Mock credit score service
+│   ├── offer_mart.py             # Pre-approved loan offer catalog
+│   ├── crm_mock.py               # Dummy CRM lookup
+│   ├── doc_intel.py              # Document intelligence (PAN/salary slip)
+│   ├── fraud_detection.py        # Optional anomaly/fake-doc checks
+│   ├── recommender.py            # Loan recommendation engine
+│   ├── scenario_compare.py       # A/B scenario comparison logic
+│   └── xai.py                    # Explainable decisioning module
+│
+├── chat/
+│   ├── chat_ui.py                # WhatsApp-style chat interface
+│   ├── nlu.py                    # Intent detection + entity extraction
+│   └── llm_stub.py               # Fallback LLM response generator
+│
+├── ui/
+│   ├── theme.py                  # Global CSS, theme colors, styling
+│   ├── auth_page.py              # Login screen
+│   ├── customer_page.py          # Customer dashboard
+│   ├── manager_page.py           # Manager dashboard (audit + reviews)
+│   └── ui_components.py          # Reusable cards, KPIs, tables
 ```
 
-### Step 3: Install Dependencies
+
+# Login Credentials
+
+| Role     | Email                                             | Password        |
+| -------- | ------------------------------------------------- | --------------- |
+| Customer | **[customer@nbfc.com](mailto:customer@nbfc.com)** | **Customer789** |
+| Manager  | **[manager@nbfc.com](mailto:manager@nbfc.com)**   | **Manager456**  |
+
+---
+
+# How to Use the Application
+
+### **1. Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4: Run Chatbot
+### **2. Run the app**
 
 ```bash
-python app.py
+streamlit run app.py
 ```
 
+### **3. Log in using customer or manager credentials**
+
+* **Customer** → Loan simulation, chat assistant, scenario comparison
+* **Manager** → Audit logs, operational dashboard, manual case decisions
+
+### **4. Explore the system**
+
+* Customers can:
+
+  * Chat with the loan assistant (“I need 3 lakh for medical”)
+  * Run structured EMI calculations
+  * Compare two loan scenarios
+  * View portfolio summary & past activity
+
+* Managers can:
+
+  * Check all previous customer decisions
+  * See explainable reasoning (XAI)
+  * Export audit logs
+  * Approve or reject conditional cases
 
 
-## 7. Sample Outputs
+# Overview
 
-### Accepted Loan Case
+This project simulates a **real NBFC underwriting workflow** using an **Agentic AI system**:
 
-Customer meets credit and salary requirements.
+1. **Sales Agent**
+   Extracts intent, amounts, reasons, upsell suggestions.
 
-<img width="825" height="669" alt="Image" src="https://github.com/user-attachments/assets/829f6ee6-ad07-47ca-892a-44de3cdeb9ff" />
+2. **Verification Agent**
+   PAN/KYC checks, salary slip parsing, fraud flags.
+
+3. **Underwriting Agent**
+   EMI rules, affordability checks, risk scoring, explainability.
+
+4. **Sanction Agent**
+   Generates a professional sanction letter (PDF).
+
+All actions are logged in JSONL, offering complete auditability.
 
 
-### Rejected Loan Case
+# Features
 
-Customer exceeds eligibility criteria (EMI or credit score).
+### Customer-Facing
 
-<img width="838" height="485" alt="Image" src="https://github.com/user-attachments/assets/3594a078-2ed5-401c-9673-6e16d329ad99" />
+* WhatsApp-style clean chat interface
+* Conversational loan advisory
+* EMI calculation & eligibility decision
+* Multi-scenario loan comparison
+* Auto-generated sanction letter
+* Clean dashboard with donut analytics
+* Salary, credit score, risk-based evaluation
+* Transparent rule-based explanations (XAI)
 
+### Manager-Facing
 
-## 8. Conclusion
+* Manager dashboard with key metrics
+* Manual review queue for conditional cases
+* Approve/reject decisions with notes
+* Audit trail viewer (decision history)
+* Export logs (CSV / JSON)
+* Color-coded decision tables & KPIs
 
-The BFSI Chatbot demonstrates a **modular Agentic AI framework** for personal loan processing.
-By coordinating multiple worker agents under a Master Agent, it replicates real-world BFSI operations efficiently and transparently.
-The system can be extended to other financial products or integrated with real-time APIs for production deployment.
+### AI & Logic
+
+* Multistage Agentic workflow
+* Intent extraction (NLU)
+* Document intelligence (PAN / salary slip)
+* Fraud anomaly checks
+* Rule-driven underwriting + risk scoring
+* Fully explainable decisions (XAI)
+
+### UI / UX
+
+* Clean sidebar navigation
+* Uniform theme + custom styling
+* Compact layouts with minimal whitespace
+* Responsive cards & KPIs
+* Donut charts with NBFC-appropriate colors
