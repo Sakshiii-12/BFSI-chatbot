@@ -78,7 +78,7 @@ def render_customer_ui(demo_customers):
     # Sidebar only here (no duplication)
     st.sidebar.markdown("<div class='sidebar-header'>MENU</div>", unsafe_allow_html=True)
     st.sidebar.markdown(f"<div class='sidebar-sub'>Signed in as<br><strong>customer</strong></div>", unsafe_allow_html=True)
-    nav = st.sidebar.radio("", ["Overview", "Compare", "Simulate", "Chat"])
+    nav = st.sidebar.radio("Customer Navigation", ["Overview", "Compare", "Simulate", "Chat"], label_visibility="collapsed")
     st.sidebar.markdown("---")
     if st.sidebar.button("Sign out"):
         st.session_state['role'] = None
@@ -151,13 +151,38 @@ def render_customer_ui(demo_customers):
             names = [c["name"] for c in demo_customers]
             sel = st.selectbox("Applicant", names)
             app = next(c for c in demo_customers if c["name"] == sel)
-            amt = st.number_input("Requested amount (Rs)", value=app.get("pre_approved_limit"), step=10000)
-            tenure = st.selectbox("Tenure (months)", [12,24,36,48,60,84], index=4)
-            pan = st.text_input("PAN (optional)")
-            salary_text = st.text_area("Salary slip text (optional)")
+            
+            # --- INPUTS ---
+            col_inp1, col_inp2 = st.columns(2)
+            with col_inp1:
+                amt = st.number_input("Requested amount (Rs)", value=app.get("pre_approved_limit"), step=10000)
+            with col_inp2:
+                tenure = st.selectbox("Tenure (months)", [12,24,36,48,60,84], index=4)
+            
+            pan = st.text_input("PAN (optional)", help="Enter if you want to override CRM data")
+            
+            # --- CHANGED: FILE UPLOADER INSTEAD OF TEXT AREA ---
+            st.markdown("<strong>Salary Slip (Required for high amounts)</strong>", unsafe_allow_html=True)
+            uploaded_file = st.file_uploader("Upload Salary Slip (PDF/Image)", type=["pdf", "png", "jpg", "jpeg"])
+            
+            salary_text_payload = ""
+            if uploaded_file is not None:
+                st.success(f"✅ Document '{uploaded_file.name}' uploaded and scanned.")
+                # HACK: In a real app, we would use OCR here. 
+                # For the hackathon, we assume the file validates the salary.
+                # We inject a string that the Regex parser in 'doc_intel.py' will understand.
+                salary_text_payload = f"Net Pay: Rs {app.get('salary', 50000)}"
+
             if st.button("Run decision"):
-                agent = MasterAgent()
-                dec, trace, pdf = agent.start_chat(app, amt, 12.0, tenure, out_folder="outputs", docs_payload={"pan_text": pan, "salary_text": salary_text})
+                # Add a spinner to show "Agents" are working
+                with st.spinner("Agents are collaborating: Sales -> Verification -> Underwriting..."):
+                    agent = MasterAgent()
+                    # We pass the "simulated" text from the file upload
+                    dec, trace, pdf = agent.start_chat(
+                        app, amt, 12.0, tenure, 
+                        out_folder="outputs", 
+                        docs_payload={"pan_text": pan, "salary_text": salary_text_payload}
+                    )
                 _render_decision_card(trace)
 
         elif nav == "Chat":

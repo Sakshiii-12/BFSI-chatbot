@@ -62,7 +62,7 @@ def render_manager_ui():
     render_css()
     st.sidebar.markdown("<div class='sidebar-header'>MENU</div>", unsafe_allow_html=True)
     st.sidebar.markdown("<div class='sidebar-sub'>Signed in as<br><strong>manager</strong></div>", unsafe_allow_html=True)
-    nav = st.sidebar.radio("", ["Overview", "Audit", "Manual Reviews"])
+    nav = st.sidebar.radio("Manager Navigation", ["Overview", "Audit", "Manual Reviews"], label_visibility="collapsed")
     st.sidebar.markdown("---")
     if st.sidebar.button("Sign out"):
         st.session_state['role'] = None
