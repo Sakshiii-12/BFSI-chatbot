@@ -198,17 +198,14 @@ Password: `Manager456`
 
 ## 7. Data and Mock Systems
 
-### Demo Customer Data
+* Demo Customer Data - 
+  At least 10 synthetic customers with salary, credit score, pre-approved amounts, PAN.
 
-* At least 10 synthetic customers with salary, credit score, pre-approved amounts, PAN.
+* CRM Mock Server - 
+  Provides PAN, address, phone, salary.
 
-### CRM Mock Server
-
-* Provides PAN, address, phone, salary.
-
-### Credit Bureau API
-
-* Mock deterministic score between 620 and 820.
+* Credit Bureau API - 
+  Mock deterministic score between 620 and 820.
 
 
 
